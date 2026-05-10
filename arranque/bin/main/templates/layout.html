@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${title + ' - FlyTrack'}">FlyTrack</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sky: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(14, 165, 233, 0.15);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .gradient-hero {
+      background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 50%, #1e3a8a 100%);
+    }
+    .gradient-hero-light {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <script th:inline="javascript">
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+    function isLoggedIn() {
+      return getCookie('token') !== null;
+    }
+  </script>
+</head>
+<body class="bg-sky-50 min-h-screen">
+  <!-- Navbar -->
+  <nav class="glass-nav fixed top-0 w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="/" class="text-2xl font-bold text-sky-600 hover:text-sky-700 transition">✈ FlyTrack</a>
+        </div>
+        <div class="flex items-center space-x-1 md:space-x-6">
+          <a href="/" class="nav-link" th:classappend="${active == 'index'} ? 'text-sky-700 font-semibold' : 'text-slate-600 hover:text-sky-600'">Inicio</a>
+          <a href="/itinerario" class="nav-link" th:classappend="${active == 'itinerario'} ? 'text-sky-700 font-semibold' : 'text-slate-600 hover:text-sky-600'">Mi Itinerario</a>
+          <a href="/equipaje" class="nav-link" th:classappend="${active == 'equipaje'} ? 'text-sky-700 font-semibold' : 'text-slate-600 hover:text-sky-600'">Equipaje</a>
+          <a href="/notificaciones" class="nav-link" th:classappend="${active == 'notificaciones'} ? 'text-sky-700 font-semibold' : 'text-slate-600 hover:text-sky-600'">Notificaciones</a>
+          <span id="userStatus" class="hidden md:inline-flex items-center text-sm text-slate-500 bg-sky-100 px-3 py-1 rounded-full"></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="gradient-hero-light pt-24 pb-16 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" th:text="${heroTitle}">FlyTrack</h1>
+      <p class="text-sky-100 text-lg" th:text="${heroSubtitle}">Gestiona tus vuelos</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 py-8 -mt-4">
+    <div class="bg-white rounded-2xl shadow-lg border border-sky-100 p-6 md:p-8">
+      <th:block th:replace="${content}" />
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    function updateUserStatus() {
+      if (isLoggedIn()) {
+        var statusEl = document.getElementById('userStatus');
+        if (statusEl) {
+          statusEl.textContent = '✓ Conectado';
+          statusEl.classList.remove('hidden');
+        }
+      }
+    }
+    document.addEventListener('DOMContentLoaded', updateUserStatus);
+  </script>
+
+  <style>
+    .nav-link {
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.5rem;
+      transition: color 0.2s;
+    }
+  </style>
+</body>
+</html>

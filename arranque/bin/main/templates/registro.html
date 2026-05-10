@@ -181,5 +181,19 @@
       }
     });
   </script>
+  <script>
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+    function isLoggedIn() {
+      return getCookie('token') !== null;
+    }
+    if (isLoggedIn()) {
+      window.location.href = '/itinerario';
+    }
+  </script>
 </body>
 </html>

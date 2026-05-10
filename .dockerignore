@@ -1,0 +1,11 @@
+.gradle
+build
+.gradle
+.git
+.gitignore
+.vscode
+.settings
+.project
+**/*.md
+**/.env
+docker/.env
