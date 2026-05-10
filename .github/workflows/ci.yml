@@ -48,3 +48,7 @@ jobs:
           name: flytrack-jar
           path: arranque/build/libs/*.jar
           retention-days: 7
+
+      - name: Trigger Render Deploy
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: curl -X POST ${{ secrets.RENDER_WEBHOOK_URL }}
