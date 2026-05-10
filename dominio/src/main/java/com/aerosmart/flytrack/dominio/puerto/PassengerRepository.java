@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PassengerRepository {
-  Optional<Passenger> buscarPorId(UUID id);
-  Optional<Passenger> buscarPorEmail(String email);
-  Passenger guardar(Passenger passenger);
+Optional<Passenger> buscarPorId(UUID id);
+Optional<Passenger> buscarPorEmail(String email);
+Passenger guardar(Passenger passenger);
 }

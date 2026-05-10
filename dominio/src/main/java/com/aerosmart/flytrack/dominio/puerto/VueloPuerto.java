@@ -6,6 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface VueloPuerto {
-  List<FlightSchedule> listarVuelosDisponibles();
-  Optional<FlightSchedule> buscarPorId(UUID id);
+List<FlightSchedule> listarVuelosDisponibles();
+Optional<FlightSchedule> buscarPorId(UUID id);
 }

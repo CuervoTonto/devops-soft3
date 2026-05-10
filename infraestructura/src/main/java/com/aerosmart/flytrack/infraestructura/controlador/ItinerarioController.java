@@ -12,24 +12,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/vuelos")
 public class ItinerarioController {
-  private final ItinerarioServicio servicio;
+private final ItinerarioServicio servicio;
 
-  public ItinerarioController(ItinerarioServicio servicio) {
+public ItinerarioController(ItinerarioServicio servicio) {
     this.servicio = servicio;
-  }
+}
 
-  @GetMapping("/itinerario")
-  public List<ItinerarioDTO> consultarPorEmail(HttpServletRequest request) {
+@GetMapping("/itinerario")
+public List<ItinerarioDTO> consultarPorEmail(HttpServletRequest request) {
     String email = (String) request.getAttribute("email");
     if (email == null) {
-      throw new IllegalArgumentException("No autenticado");
+    throw new IllegalArgumentException("No autenticado");
     }
     return servicio.consultarPorEmailDTO(email);
-  }
+}
 
-  @GetMapping("/itinerario/{referencia}")
-  public ItinerarioDTO consultarPorReferencia(@PathVariable String referencia) {
+@GetMapping("/itinerario/{referencia}")
+public ItinerarioDTO consultarPorReferencia(@PathVariable String referencia) {
     return servicio.consultarPorReferenciaDTO(referencia)
         .orElseThrow(() -> new RuntimeException("Itinerario no encontrado"));
-  }
+}
 }

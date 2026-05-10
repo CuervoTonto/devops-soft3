@@ -1,9 +1,9 @@
 package com.aerosmart.flytrack.dominio.valueobject;
 
 public record IATACode(String value) {
-  public IATACode {
+public IATACode {
     if (value == null || value.length() != 3) {
-      throw new IllegalArgumentException("Codigo IATA debe tener 3 caracteres");
+    throw new IllegalArgumentException("Codigo IATA debe tener 3 caracteres");
     }
-  }
+}
 }

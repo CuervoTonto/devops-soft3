@@ -38,106 +38,106 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ConfiguracionServicios {
 
-  @Value("${app.jwt.secret: flytrack-secret-key-para-desarrollo-2024}")
-  private String jwtSecret;
+@Value("${app.jwt.secret: flytrack-secret-key-para-desarrollo-2024}")
+private String jwtSecret;
 
-  @Bean
-  public TokenService tokenService() {
+@Bean
+public TokenService tokenService() {
     return new JwtTokenServiceAdapter(jwtSecret);
-  }
+}
 
-  @Bean
-  public PassengerMapper passengerMapper() {
+@Bean
+public PassengerMapper passengerMapper() {
     return new PassengerMapper();
-  }
+}
 
-  @Bean
-  public FlightMapper flightMapper() {
+@Bean
+public FlightMapper flightMapper() {
     return new FlightMapper();
-  }
+}
 
-  @Bean
-  public FlightScheduleMapper flightScheduleMapper() {
+@Bean
+public FlightScheduleMapper flightScheduleMapper() {
     return new FlightScheduleMapper();
-  }
+}
 
-  @Bean
-  public BaggageReportMapper baggageReportMapper() {
+@Bean
+public BaggageReportMapper baggageReportMapper() {
     return new BaggageReportMapper();
-  }
+}
 
-  @Bean
-  public BookingMapper bookingMapper(FlightScheduleMapper flightScheduleMapper, 
-      PassengerMapper passengerMapper) {
+@Bean
+public BookingMapper bookingMapper(FlightScheduleMapper flightScheduleMapper,
+    PassengerMapper passengerMapper) {
     return new BookingMapper(flightScheduleMapper, passengerMapper);
-  }
+}
 
-  @Bean
-  public PassengerRepository passengerRepository(PassengerJpaRepository jpaRepository,
-      PassengerMapper mapper) {
+@Bean
+public PassengerRepository passengerRepository(PassengerJpaRepository jpaRepository,
+    PassengerMapper mapper) {
     return new PassengerRepositoryAdapter(jpaRepository, mapper);
-  }
+}
 
-  @Bean
-  public BookingRepository bookingRepository(BookingJpaRepository jpaRepository,
-      BookingMapper mapper, PassengerRepository passengerRepo, FlightScheduleRepository flightScheduleRepo) {
+@Bean
+public BookingRepository bookingRepository(BookingJpaRepository jpaRepository,
+    BookingMapper mapper, PassengerRepository passengerRepo, FlightScheduleRepository flightScheduleRepo) {
     return new BookingRepositoryAdapter(jpaRepository, mapper, passengerRepo, flightScheduleRepo);
-  }
+}
 
-  @Bean
-  public FlightScheduleRepository flightScheduleRepository(
-      FlightScheduleJpaRepository jpaRepository,
-      FlightScheduleMapper mapper) {
+@Bean
+public FlightScheduleRepository flightScheduleRepository(
+    FlightScheduleJpaRepository jpaRepository,
+    FlightScheduleMapper mapper) {
     return new FlightScheduleRepositoryAdapter(jpaRepository, mapper);
-  }
+}
 
-  @Bean
-  public NotificationRepository notificationRepository(NotificationJpaRepository jpaRepository,
-      PassengerMapper passengerMapper, PassengerJpaRepository passengerJpaRepository) {
+@Bean
+public NotificationRepository notificationRepository(NotificationJpaRepository jpaRepository,
+    PassengerMapper passengerMapper, PassengerJpaRepository passengerJpaRepository) {
     return new NotificationRepositoryAdapter(jpaRepository, passengerMapper, passengerJpaRepository);
-  }
+}
 
-  @Bean
-  public BaggageReportRepository baggageReportRepository(
-      BaggageReportJpaRepository jpaRepository,
-      BaggageReportMapper baggageReportMapper,
-      BookingJpaRepository bookingJpaRepository,
-      BookingMapper bookingMapper) {
+@Bean
+public BaggageReportRepository baggageReportRepository(
+    BaggageReportJpaRepository jpaRepository,
+    BaggageReportMapper baggageReportMapper,
+    BookingJpaRepository bookingJpaRepository,
+    BookingMapper bookingMapper) {
     return new BaggageReportRepositoryAdapter(jpaRepository, baggageReportMapper, bookingJpaRepository, bookingMapper);
-  }
+}
 
-  @Bean
-  public ItinerarioServicio itinerarioServicio(PassengerRepository passengerRepo,
-      BookingRepository bookingRepo) {
+@Bean
+public ItinerarioServicio itinerarioServicio(PassengerRepository passengerRepo,
+    BookingRepository bookingRepo) {
     return new ItinerarioServicio(passengerRepo, bookingRepo);
-  }
+}
 
-  @Bean
-  public EquipajeServicio equipajeServicio(BookingRepository bookingRepo,
-      BaggageReportRepository baggageReportRepo, PassengerRepository passengerRepo) {
+@Bean
+public EquipajeServicio equipajeServicio(BookingRepository bookingRepo,
+    BaggageReportRepository baggageReportRepo, PassengerRepository passengerRepo) {
     return new EquipajeServicio(bookingRepo, baggageReportRepo, passengerRepo);
-  }
+}
 
-  @Bean
-  public AutenticacionServicio autenticacionServicio(TokenService tokenService,
-      PassengerRepository passengerRepo, PasswordEncoderPuerto passwordEncoder) {
+@Bean
+public AutenticacionServicio autenticacionServicio(TokenService tokenService,
+    PassengerRepository passengerRepo, PasswordEncoderPuerto passwordEncoder) {
     return new AutenticacionServicio(tokenService, passengerRepo, passwordEncoder);
-  }
+}
 
-  @Bean
-  public NotificacionServicio notificacionServicio(NotificationRepository notificationRepo,
-      PassengerRepository passengerRepo) {
+@Bean
+public NotificacionServicio notificacionServicio(NotificationRepository notificationRepo,
+    PassengerRepository passengerRepo) {
     return new NotificacionServicio(notificationRepo, passengerRepo);
-  }
+}
 
-  @Bean
-  public VueloServicio vueloServicio(FlightScheduleRepository fsRepo) {
+@Bean
+public VueloServicio vueloServicio(FlightScheduleRepository fsRepo) {
     return new VueloServicio((VueloPuerto) fsRepo);
-  }
+}
 
-  @Bean
-  public ReservaServicio reservaServicio(BookingRepository bRepo,
-      PassengerRepository passengerRepo) {
+@Bean
+public ReservaServicio reservaServicio(BookingRepository bRepo,
+    PassengerRepository passengerRepo) {
     return new ReservaServicio((ReservaPuerto) bRepo, passengerRepo);
-  }
+}
 }

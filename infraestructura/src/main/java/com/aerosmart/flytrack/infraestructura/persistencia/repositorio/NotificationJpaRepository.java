@@ -6,5 +6,5 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationJpaRepository extends JpaRepository<NotificationEntity, UUID> {
-  List<NotificationEntity> findByPassengerId(UUID passengerId);
+List<NotificationEntity> findByPassengerId(UUID passengerId);
 }

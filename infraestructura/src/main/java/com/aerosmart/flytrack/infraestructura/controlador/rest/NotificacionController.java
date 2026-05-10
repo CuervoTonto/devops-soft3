@@ -11,19 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/notificaciones")
 public class NotificacionController {
-  private final NotificacionServicio servicio;
+private final NotificacionServicio servicio;
 
-  public NotificacionController(NotificacionServicio servicio) {
+public NotificacionController(NotificacionServicio servicio) {
     this.servicio = servicio;
-  }
+}
 
-  @GetMapping
-  public List<NotificacionDTO> listar(HttpServletRequest request) {
+@GetMapping
+public List<NotificacionDTO> listar(HttpServletRequest request) {
     String email = (String) request.getAttribute("email");
     if (email == null) {
-      throw new IllegalArgumentException("No autenticado");
+    throw new IllegalArgumentException("No autenticado");
     }
     var passenger = servicio.buscarPasajeroPorEmail(email);
     return servicio.obtenerNotificacionesDTO(passenger.getId());
-  }
+}
 }

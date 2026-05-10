@@ -6,8 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface BookingRepository {
-  Optional<Booking> buscarPorId(UUID id);
-  Optional<Booking> buscarPorReferencia(String reference);
-  List<Booking> buscarPorPasajero(UUID passengerId);
-  Booking guardar(Booking booking);
+Optional<Booking> buscarPorId(UUID id);
+Optional<Booking> buscarPorReferencia(String reference);
+List<Booking> buscarPorPasajero(UUID passengerId);
+Booking guardar(Booking booking);
 }

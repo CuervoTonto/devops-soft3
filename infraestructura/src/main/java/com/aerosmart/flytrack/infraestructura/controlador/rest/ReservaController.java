@@ -12,20 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/reservas")
 public class ReservaController {
-  private final ReservaServicio servicio;
+private final ReservaServicio servicio;
 
-  public ReservaController(ReservaServicio servicio) {
+public ReservaController(ReservaServicio servicio) {
     this.servicio = servicio;
-  }
+}
 
-  @PostMapping
-  public ReservaDTO crearReserva(HttpServletRequest request, @RequestBody ReservaRequest req) {
+@PostMapping
+public ReservaDTO crearReserva(HttpServletRequest request, @RequestBody ReservaRequest req) {
     String email = (String) request.getAttribute("email");
     if (email == null) {
-      throw new IllegalStateException("Debes iniciar sesión para reservar");
+    throw new IllegalStateException("Debes iniciar sesión para reservar");
     }
     return servicio.crearReservaDTO(email, UUID.fromString(req.flightScheduleId()));
-  }
+}
 
-  public record ReservaRequest(String flightScheduleId) {}
+public record ReservaRequest(String flightScheduleId) {}
 }

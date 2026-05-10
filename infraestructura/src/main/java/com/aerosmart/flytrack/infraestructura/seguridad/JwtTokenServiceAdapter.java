@@ -7,20 +7,20 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 
 public class JwtTokenServiceAdapter implements TokenService {
-  private final String secret;
-  private final long expiracionMs;
+private final String secret;
+private final long expiracionMs;
 
-  public JwtTokenServiceAdapter(String secret) {
+public JwtTokenServiceAdapter(String secret) {
     this(secret, 86400000L);
-  }
+}
 
-  public JwtTokenServiceAdapter(String secret, long expiracionMs) {
+public JwtTokenServiceAdapter(String secret, long expiracionMs) {
     this.secret = secret;
     this.expiracionMs = expiracionMs;
-  }
+}
 
-  @Override
-  public String generarToken(String email) {
+@Override
+public String generarToken(String email) {
     SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
     return Jwts.builder()
         .subject(email)
@@ -28,10 +28,10 @@ public class JwtTokenServiceAdapter implements TokenService {
         .expiration(new Date(System.currentTimeMillis() + expiracionMs))
         .signWith(key)
         .compact();
-  }
+}
 
-  @Override
-  public String obtenerEmailDelToken(String token) {
+@Override
+public String obtenerEmailDelToken(String token) {
     SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
     return Jwts.parser()
         .verifyWith(key)
@@ -39,15 +39,15 @@ public class JwtTokenServiceAdapter implements TokenService {
         .parseSignedClaims(token)
         .getPayload()
         .getSubject();
-  }
+}
 
-  @Override
-  public boolean validarToken(String token) {
+@Override
+public boolean validarToken(String token) {
     try {
-      obtenerEmailDelToken(token);
-      return true;
+    obtenerEmailDelToken(token);
+    return true;
     } catch (Exception e) {
-      return false;
+    return false;
     }
-  }
+}
 }

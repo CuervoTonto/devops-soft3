@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(ReservaNoEncontradaException.class)
-  public ResponseEntity<Map<String, String>> handleReservaNoEncontrada(ReservaNoEncontradaException ex) {
+@ExceptionHandler(ReservaNoEncontradaException.class)
+public ResponseEntity<Map<String, String>> handleReservaNoEncontrada(ReservaNoEncontradaException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(Map.of("message", ex.getMessage()));
-  }
+}
 
-  @ExceptionHandler(VueloNoDisponibleException.class)
-  public ResponseEntity<Map<String, String>> handleVueloNoDisponible(VueloNoDisponibleException ex) {
+@ExceptionHandler(VueloNoDisponibleException.class)
+public ResponseEntity<Map<String, String>> handleVueloNoDisponible(VueloNoDisponibleException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT)
         .body(Map.of("message", ex.getMessage()));
-  }
+}
 
-  @ExceptionHandler(PeriodoReporteExpiradoException.class)
-  public ResponseEntity<Map<String, String>> handlePeriodoExpirado(PeriodoReporteExpiradoException ex) {
+@ExceptionHandler(PeriodoReporteExpiradoException.class)
+public ResponseEntity<Map<String, String>> handlePeriodoExpirado(PeriodoReporteExpiradoException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT)
         .body(Map.of("message", ex.getMessage()));
-  }
+}
 }

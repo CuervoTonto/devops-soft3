@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BaggageReportRepository {
-  BaggageReport guardar(BaggageReport report);
-  List<BaggageReport> buscarPorBooking(UUID bookingId);
-  List<BaggageReport> buscarPorPasajero(UUID passengerId);
+BaggageReport guardar(BaggageReport report);
+List<BaggageReport> buscarPorBooking(UUID bookingId);
+List<BaggageReport> buscarPorPasajero(UUID passengerId);
 }

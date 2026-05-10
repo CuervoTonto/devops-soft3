@@ -14,55 +14,55 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BookingRepositoryAdapter implements BookingRepository, ReservaPuerto {
-  private final BookingJpaRepository jpaRepository;
-  private final BookingMapper mapper;
-  private final PassengerRepository passengerRepository;
-  private final FlightScheduleRepository flightScheduleRepository;
+private final BookingJpaRepository jpaRepository;
+private final BookingMapper mapper;
+private final PassengerRepository passengerRepository;
+private final FlightScheduleRepository flightScheduleRepository;
 
-  public BookingRepositoryAdapter(BookingJpaRepository jpaRepository, 
-      BookingMapper mapper,
-      PassengerRepository passengerRepository,
-      FlightScheduleRepository flightScheduleRepository) {
+public BookingRepositoryAdapter(BookingJpaRepository jpaRepository,
+    BookingMapper mapper,
+    PassengerRepository passengerRepository,
+    FlightScheduleRepository flightScheduleRepository) {
     this.jpaRepository = jpaRepository;
     this.mapper = mapper;
     this.passengerRepository = passengerRepository;
     this.flightScheduleRepository = flightScheduleRepository;
-  }
+}
 
-  @Override
-  public Optional<Booking> buscarPorId(UUID id) {
+@Override
+public Optional<Booking> buscarPorId(UUID id) {
     return jpaRepository.findById(id).map(mapper::toDomain);
-  }
+}
 
-  @Override
-  public Optional<Booking> buscarPorReferencia(String reference) {
+@Override
+public Optional<Booking> buscarPorReferencia(String reference) {
     return jpaRepository.findByBookingReference(reference).map(mapper::toDomain);
-  }
+}
 
-  @Override
-  public List<Booking> buscarPorPasajero(UUID passengerId) {
+@Override
+public List<Booking> buscarPorPasajero(UUID passengerId) {
     return jpaRepository.findByPassengerId(passengerId).stream()
         .map(mapper::toDomain)
         .toList();
-  }
+}
 
-  @Override
-  public Booking guardar(Booking booking) {
+@Override
+public Booking guardar(Booking booking) {
     BookingEntity entity = mapper.toEntity(booking);
     BookingEntity saved = jpaRepository.save(entity);
     booking.setId(saved.getId());
     return booking;
-  }
+}
 
-  @Override
-  public Booking crearReserva(UUID passengerId, UUID flightScheduleId, String seat) {
+@Override
+public Booking crearReserva(UUID passengerId, UUID flightScheduleId, String seat) {
     Passenger passenger = passengerRepository.buscarPorId(passengerId)
         .orElseThrow(() -> new IllegalArgumentException("Pasajero no encontrado"));
-    
+
     FlightSchedule schedule = flightScheduleRepository.buscarPorId(flightScheduleId)
         .orElseThrow(() -> new IllegalArgumentException("Vuelo no encontrado"));
-    
+
     Booking booking = new Booking(passenger, schedule, seat);
     return guardar(booking);
-  }
+}
 }

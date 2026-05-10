@@ -8,27 +8,27 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class PassengerRepositoryAdapter implements PassengerRepository {
-  private final PassengerJpaRepository jpaRepository;
-  private final PassengerMapper mapper;
+private final PassengerJpaRepository jpaRepository;
+private final PassengerMapper mapper;
 
-  public PassengerRepositoryAdapter(PassengerJpaRepository jpaRepository, PassengerMapper mapper) {
+public PassengerRepositoryAdapter(PassengerJpaRepository jpaRepository, PassengerMapper mapper) {
     this.jpaRepository = jpaRepository;
     this.mapper = mapper;
-  }
+}
 
-  @Override
-  public Optional<Passenger> buscarPorId(UUID id) {
+@Override
+public Optional<Passenger> buscarPorId(UUID id) {
     return jpaRepository.findById(id).map(mapper::toDomain);
-  }
+}
 
-  @Override
-  public Optional<Passenger> buscarPorEmail(String email) {
+@Override
+public Optional<Passenger> buscarPorEmail(String email) {
     return jpaRepository.findByEmail(email).map(mapper::toDomain);
-  }
+}
 
-  @Override
-  public Passenger guardar(Passenger passenger) {
+@Override
+public Passenger guardar(Passenger passenger) {
     PassengerEntity entity = mapper.toEntity(passenger);
     return mapper.toDomain(jpaRepository.save(entity));
-  }
+}
 }

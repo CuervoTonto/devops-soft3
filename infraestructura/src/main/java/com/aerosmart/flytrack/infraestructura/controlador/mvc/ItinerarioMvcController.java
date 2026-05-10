@@ -14,29 +14,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/itinerario")
 public class ItinerarioMvcController {
-  private final ItinerarioServicio servicio;
+private final ItinerarioServicio servicio;
 
-  public ItinerarioMvcController(ItinerarioServicio servicio) {
+public ItinerarioMvcController(ItinerarioServicio servicio) {
     this.servicio = servicio;
-  }
+}
 
-  @GetMapping
-  public String verItinerario(HttpServletRequest request, Model model) {
+@GetMapping
+public String verItinerario(HttpServletRequest request, Model model) {
     String email = (String) request.getAttribute("email");
     if (email != null) {
-      List<ItinerarioDTO> itinerarios = servicio.consultarPorEmailDTO(email);
-      model.addAttribute("itinerarios", itinerarios);
-      model.addAttribute("email", email);
+    List<ItinerarioDTO> itinerarios = servicio.consultarPorEmailDTO(email);
+    model.addAttribute("itinerarios", itinerarios);
+    model.addAttribute("email", email);
     }
     return "itinerario";
-  }
+}
 
-  @GetMapping("/detalle/{referencia}")
-  public String detalle(@PathVariable String referencia, Model model) {
+@GetMapping("/detalle/{referencia}")
+public String detalle(@PathVariable String referencia, Model model) {
     Optional<ItinerarioDTO> dto = servicio.consultarPorReferenciaDTO(referencia);
     if (dto.isPresent()) {
-      model.addAttribute("itinerario", dto.get());
+    model.addAttribute("itinerario", dto.get());
     }
     return "itinerario-detalle";
-  }
+}
 }

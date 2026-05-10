@@ -7,21 +7,21 @@ public record RegistroCommand(
     String lastName,
     String passportNumber
 ) {
-  public void validar() {
+public void validar() {
     if (email == null || email.isBlank()) {
-      throw new IllegalArgumentException("El email es requerido");
+    throw new IllegalArgumentException("El email es requerido");
     }
     if (password == null || password.isBlank()) {
-      throw new IllegalArgumentException("La contrasena es requerida");
+    throw new IllegalArgumentException("La contrasena es requerida");
     }
     if (firstName == null || firstName.isBlank()) {
-      throw new IllegalArgumentException("El nombre es requerido");
+    throw new IllegalArgumentException("El nombre es requerido");
     }
     if (lastName == null || lastName.isBlank()) {
-      throw new IllegalArgumentException("El apellido es requerido");
+    throw new IllegalArgumentException("El apellido es requerido");
     }
     if (passportNumber == null || passportNumber.isBlank()) {
-      throw new IllegalArgumentException("El numero de pasaporte es requerido");
+    throw new IllegalArgumentException("El numero de pasaporte es requerido");
     }
-  }
+}
 }

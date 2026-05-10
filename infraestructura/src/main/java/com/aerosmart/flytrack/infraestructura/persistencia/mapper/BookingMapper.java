@@ -5,21 +5,20 @@ import com.aerosmart.flytrack.dominio.entidad.Passenger;
 import com.aerosmart.flytrack.dominio.valueobject.BookingReference;
 import com.aerosmart.flytrack.infraestructura.persistencia.entidad.BookingEntity;
 import com.aerosmart.flytrack.infraestructura.persistencia.entidad.FlightScheduleEntity;
-import java.time.LocalDateTime;
 
 public class BookingMapper {
-  private final FlightScheduleMapper flightScheduleMapper;
-  private final PassengerMapper passengerMapper;
+private final FlightScheduleMapper flightScheduleMapper;
+private final PassengerMapper passengerMapper;
 
-  public BookingMapper(FlightScheduleMapper flightScheduleMapper, PassengerMapper passengerMapper) {
+public BookingMapper(FlightScheduleMapper flightScheduleMapper, PassengerMapper passengerMapper) {
     this.flightScheduleMapper = flightScheduleMapper;
     this.passengerMapper = passengerMapper;
-  }
+}
 
-  public Booking toDomain(BookingEntity entity) {
+public Booking toDomain(BookingEntity entity) {
     Passenger passenger = passengerMapper.toDomain(entity.getPassenger());
     FlightScheduleEntity scheduleEntity = entity.getFlightSchedule();
-    
+
     var flightSchedule = flightScheduleMapper.toDomainConRelaciones(
         scheduleEntity.getId(),
         scheduleEntity.getOriginIata(),
@@ -35,26 +34,26 @@ public class BookingMapper {
     booking.setId(entity.getId());
     booking.setReference(new BookingReference(entity.getBookingReference()));
     return booking;
-  }
+}
 
-  public BookingEntity toEntity(Booking booking) {
+public BookingEntity toEntity(Booking booking) {
     BookingEntity entity = new BookingEntity();
-    
+
     var passengerMapper = this.passengerMapper;
     var passengerEntity = new com.aerosmart.flytrack.infraestructura.persistencia.entidad.PassengerEntity();
     passengerEntity.setId(booking.getPassenger().getId());
     entity.setPassenger(passengerEntity);
-    
+
     var fsEntity = new com.aerosmart.flytrack.infraestructura.persistencia.entidad.FlightScheduleEntity();
     fsEntity.setId(booking.getFlightSchedule().getId());
     entity.setFlightSchedule(fsEntity);
-    
+
     entity.setSeatAssignment(booking.getSeatAssignment());
     entity.setBookingReference(booking.getReference().value());
     entity.setCreatedAt(booking.getCreatedAt());
     if (booking.getId() != null) {
-      entity.setId(booking.getId());
+    entity.setId(booking.getId());
     }
     return entity;
-  }
+}
 }

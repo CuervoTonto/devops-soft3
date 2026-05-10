@@ -10,36 +10,36 @@ import java.util.List;
 import java.util.UUID;
 
 public class NotificacionServicio implements NotificacionPuerto {
-  private final NotificationRepository notificationRepo;
-  private final PassengerRepository passengerRepo;
+private final NotificationRepository notificationRepo;
+private final PassengerRepository passengerRepo;
 
-  public NotificacionServicio(NotificationRepository notificationRepo, PassengerRepository passengerRepo) {
+public NotificacionServicio(NotificationRepository notificationRepo, PassengerRepository passengerRepo) {
     this.notificationRepo = notificationRepo;
     this.passengerRepo = passengerRepo;
-  }
+}
 
-  public Passenger buscarPasajeroPorEmail(String email) {
+public Passenger buscarPasajeroPorEmail(String email) {
     return passengerRepo.buscarPorEmail(email)
         .orElseThrow(() -> new IllegalArgumentException("Pasajero no encontrado"));
-  }
+}
 
-  @Override
-  public void notificarCambioVuelo(UUID passengerId, String titulo, String mensaje) {
+@Override
+public void notificarCambioVuelo(UUID passengerId, String titulo, String mensaje) {
     var passenger = passengerRepo.buscarPorId(passengerId)
         .orElseThrow(() -> new IllegalArgumentException("Pasajero no encontrado"));
-    
+
     var notification = new Notification(passenger, titulo, mensaje);
     notificationRepo.guardar(notification);
-  }
+}
 
-  @Override
-  public List<Notification> obtenerNotificaciones(UUID passengerId) {
+@Override
+public List<Notification> obtenerNotificaciones(UUID passengerId) {
     return notificationRepo.buscarPorPasajero(passengerId);
-  }
+}
 
-  public List<NotificacionDTO> obtenerNotificacionesDTO(UUID passengerId) {
+public List<NotificacionDTO> obtenerNotificacionesDTO(UUID passengerId) {
     return obtenerNotificaciones(passengerId).stream()
         .map(n -> new NotificacionDTO(n.getTitle(), n.getMessage(), n.getSentAt()))
         .toList();
-  }
+}
 }

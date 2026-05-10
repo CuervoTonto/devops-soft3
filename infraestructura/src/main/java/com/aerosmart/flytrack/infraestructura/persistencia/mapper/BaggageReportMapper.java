@@ -6,9 +6,9 @@ import java.util.UUID;
 
 public class BaggageReportMapper {
 
-  public BaggageReport toDomain(BaggageReportEntity entity, BookingMapper bookingMapper) {
+public BaggageReport toDomain(BaggageReportEntity entity, BookingMapper bookingMapper) {
     var booking = bookingMapper.toDomain(entity.getBooking());
-    
+
     BaggageReport report = new BaggageReport(
         booking,
         entity.getIncidentType(),
@@ -16,14 +16,14 @@ public class BaggageReportMapper {
     );
     report.setId(entity.getId());
     return report;
-  }
+}
 
-  public BaggageReportEntity toEntity(BaggageReport report, UUID bookingId) {
+public BaggageReportEntity toEntity(BaggageReport report, UUID bookingId) {
     BaggageReportEntity entity = new BaggageReportEntity();
     entity.setIncidentType(report.getIncidentType().name());
     entity.setDescription(report.getDescription());
     entity.setStatus(report.getStatus().name());
     entity.setReportedAt(report.getReportedAt());
     return entity;
-  }
+}
 }

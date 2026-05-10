@@ -17,71 +17,71 @@ import java.util.List;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-  private static final List<String> RUTAS_PUBLICAS_PREFIX = List.of(
+private static final List<String> RUTAS_PUBLICAS_PREFIX = List.of(
     "/api/auth/",
     "/css/",
     "/js/"
-  );
+);
 
-  private static final List<String> RUTAS_PUBLICAS_EXACTAS = List.of(
+private static final List<String> RUTAS_PUBLICAS_EXACTAS = List.of(
     "/",
     "/login",
     "/registro",
     "/error"
-  );
+);
 
-  private final TokenService tokenService;
+private final TokenService tokenService;
 
-  public JwtAuthenticationFilter(TokenService tokenService) {
+public JwtAuthenticationFilter(TokenService tokenService) {
     this.tokenService = tokenService;
-  }
+}
 
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) {
+@Override
+protected boolean shouldNotFilter(HttpServletRequest request) {
     String path = request.getRequestURI();
-    
-    boolean esPublica = RUTAS_PUBLICAS_EXACTAS.contains(path) 
+
+    boolean esPublica = RUTAS_PUBLICAS_EXACTAS.contains(path)
         || RUTAS_PUBLICAS_PREFIX.stream().anyMatch(path::startsWith);
-    
+
     log.info("shouldNotFilter - Path: {}, Skip: {}", path, esPublica);
     return esPublica;
-  }
+}
 
-  @Override
-  protected void doFilterInternal(HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  FilterChain filterChain) throws ServletException, IOException {
-    
+@Override
+protected void doFilterInternal(HttpServletRequest request,
+                                HttpServletResponse response,
+                                FilterChain filterChain) throws ServletException, IOException {
+
     log.info(">>> doFilterInternal - Request URI: {}", request.getRequestURI());
-    
+
     String token = extraerToken(request);
     log.debug("Token extraido: {}", token != null ? "presente" : "null");
 
     if (token != null && tokenService.validarToken(token)) {
-      String email = tokenService.obtenerEmailDelToken(token);
-      log.debug("Token valido, email: {}", email);
-      request.setAttribute("email", email);
+    String email = tokenService.obtenerEmailDelToken(token);
+    log.debug("Token valido, email: {}", email);
+    request.setAttribute("email", email);
     } else {
-      log.debug("Token no valido o null");
+    log.debug("Token no valido o null");
     }
 
     filterChain.doFilter(request, response);
-  }
+}
 
-  private String extraerToken(HttpServletRequest request) {
+private String extraerToken(HttpServletRequest request) {
     if (request.getCookies() != null) {
-      log.debug("Cookies encontradas: {}", request.getCookies().length);
-      for (Cookie cookie : request.getCookies()) {
+    log.debug("Cookies encontradas: {}", request.getCookies().length);
+    for (Cookie cookie : request.getCookies()) {
         log.debug("Cookie: name={}, value={}", cookie.getName(), cookie.getValue());
         if ("token".equals(cookie.getName())) {
-          return cookie.getValue();
+        return cookie.getValue();
         }
-      }
+    }
     } else {
-      log.debug("No hay cookies en la peticion");
+    log.debug("No hay cookies en la peticion");
     }
     return null;
-  }
+}
 }

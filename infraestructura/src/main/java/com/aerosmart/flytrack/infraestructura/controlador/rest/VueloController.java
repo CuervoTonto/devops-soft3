@@ -11,19 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/vuelos")
 public class VueloController {
-  private final VueloServicio servicio;
+private final VueloServicio servicio;
 
-  public VueloController(VueloServicio servicio) {
+public VueloController(VueloServicio servicio) {
     this.servicio = servicio;
-  }
+}
 
-  @GetMapping
-  public List<VueloDTO> listarVuelos() {
+@GetMapping
+public List<VueloDTO> listarVuelos() {
     return servicio.listarVuelosDisponiblesDTO();
-  }
+}
 
-  @GetMapping("/{id}")
-  public VueloDTO obtenerVuelo(@PathVariable java.util.UUID id) {
+@GetMapping("/{id}")
+public VueloDTO obtenerVuelo(@PathVariable java.util.UUID id) {
     return servicio.buscarPorIdDTO(id);
-  }
+}
 }

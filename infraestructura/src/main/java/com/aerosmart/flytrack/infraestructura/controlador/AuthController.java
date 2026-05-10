@@ -13,20 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-  private final AutenticacionServicio servicio;
+private final AutenticacionServicio servicio;
 
-  public AuthController(AutenticacionServicio servicio) {
+public AuthController(AutenticacionServicio servicio) {
     this.servicio = servicio;
-  }
+}
 
-  @PostMapping("/login")
-  public Map<String, String> login(@Valid @RequestBody LoginRequest request) {
+@PostMapping("/login")
+public Map<String, String> login(@Valid @RequestBody LoginRequest request) {
     String token = servicio.login(request.email(), request.password());
     return Map.of("token", token);
-  }
+}
 
-  @PostMapping("/registro")
-  public Map<String, String> registro(@Valid @RequestBody RegistroRequest request) {
+@PostMapping("/registro")
+public Map<String, String> registro(@Valid @RequestBody RegistroRequest request) {
     RegistroCommand command = new RegistroCommand(
         request.email(),
         request.password(),
@@ -37,12 +37,12 @@ public class AuthController {
     servicio.registrar(command);
     String token = servicio.login(request.email(), request.password());
     return Map.of("token", token);
-  }
+}
 
-  @PostMapping("/logout")
-  public Map<String, String> logout() {
+@PostMapping("/logout")
+public Map<String, String> logout() {
     return Map.of("message", "Sesión cerrada");
-  }
+}
 
-  public record LoginRequest(String email, String password) {}
+public record LoginRequest(String email, String password) {}
 }

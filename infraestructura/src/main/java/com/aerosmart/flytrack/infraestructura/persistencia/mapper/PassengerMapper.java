@@ -6,7 +6,7 @@ import com.aerosmart.flytrack.infraestructura.persistencia.entidad.PassengerEnti
 
 public class PassengerMapper {
 
-  public Passenger toDomain(PassengerEntity entity) {
+public Passenger toDomain(PassengerEntity entity) {
     Passenger passenger = new Passenger(
         entity.getFirstName(),
         entity.getLastName(),
@@ -16,12 +16,12 @@ public class PassengerMapper {
     );
     passenger.setId(entity.getId());
     return passenger;
-  }
+}
 
-  public PassengerEntity toEntity(Passenger passenger) {
+public PassengerEntity toEntity(Passenger passenger) {
     PassengerEntity entity = new PassengerEntity();
     if (passenger.getId() != null) {
-      entity.setId(passenger.getId());
+    entity.setId(passenger.getId());
     }
     entity.setFirstName(passenger.getFirstName());
     entity.setLastName(passenger.getLastName());
@@ -29,5 +29,5 @@ public class PassengerMapper {
     entity.setPassportNumber(passenger.getPassportNumber());
     entity.setPassword(passenger.getPassword());
     return entity;
-  }
+}
 }

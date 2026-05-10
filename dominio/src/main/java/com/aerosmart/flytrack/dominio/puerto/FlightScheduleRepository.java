@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface FlightScheduleRepository {
-  FlightSchedule guardar(FlightSchedule schedule);
-  List<FlightSchedule> buscarPorVuelo(UUID flightId);
-  Optional<FlightSchedule> buscarPorId(UUID id);
+FlightSchedule guardar(FlightSchedule schedule);
+List<FlightSchedule> buscarPorVuelo(UUID flightId);
+Optional<FlightSchedule> buscarPorId(UUID id);
 }

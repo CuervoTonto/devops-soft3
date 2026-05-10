@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/notificaciones")
 public class NotificacionMvcController {
-  private final NotificacionServicio servicio;
+private final NotificacionServicio servicio;
 
-  public NotificacionMvcController(NotificacionServicio servicio) {
+public NotificacionMvcController(NotificacionServicio servicio) {
     this.servicio = servicio;
-  }
+}
 
-  @GetMapping
-  public String verNotificaciones(HttpServletRequest request, Model model) {
+@GetMapping
+public String verNotificaciones(HttpServletRequest request, Model model) {
     String email = (String) request.getAttribute("email");
     if (email != null) {
-      var passenger = servicio.buscarPasajeroPorEmail(email);
-      List<NotificacionDTO> notificaciones = servicio.obtenerNotificacionesDTO(passenger.getId());
-      model.addAttribute("notificaciones", notificaciones);
-      model.addAttribute("email", email);
+    var passenger = servicio.buscarPasajeroPorEmail(email);
+    List<NotificacionDTO> notificaciones = servicio.obtenerNotificacionesDTO(passenger.getId());
+    model.addAttribute("notificaciones", notificaciones);
+    model.addAttribute("email", email);
     }
     return "notificaciones";
-  }
+}
 }

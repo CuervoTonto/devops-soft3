@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BaggageReportJpaRepository extends JpaRepository<BaggageReportEntity, UUID> {
-  List<BaggageReportEntity> findByBookingId(UUID bookingId);
-  List<BaggageReportEntity> findByBookingIdOrderByReportedAtDesc(UUID bookingId);
-  List<BaggageReportEntity> findByStatus(String status);
-  
-  @Query("SELECT br FROM BaggageReportEntity br WHERE br.booking.passenger.id = :passengerId ORDER BY br.reportedAt DESC")
-  List<BaggageReportEntity> findByPassengerId(@Param("passengerId") UUID passengerId);
+List<BaggageReportEntity> findByBookingId(UUID bookingId);
+List<BaggageReportEntity> findByBookingIdOrderByReportedAtDesc(UUID bookingId);
+List<BaggageReportEntity> findByStatus(String status);
+
+@Query("SELECT br FROM BaggageReportEntity br WHERE br.booking.passenger.id = :passengerId ORDER BY br.reportedAt DESC")
+List<BaggageReportEntity> findByPassengerId(@Param("passengerId") UUID passengerId);
 }

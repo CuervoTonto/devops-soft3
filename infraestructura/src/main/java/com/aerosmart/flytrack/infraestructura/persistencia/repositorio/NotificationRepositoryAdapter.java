@@ -10,19 +10,19 @@ import java.util.List;
 import java.util.UUID;
 
 public class NotificationRepositoryAdapter implements NotificationRepository {
-  private final NotificationJpaRepository jpaRepository;
-  private final PassengerMapper passengerMapper;
-  private final PassengerJpaRepository passengerJpaRepository;
+private final NotificationJpaRepository jpaRepository;
+private final PassengerMapper passengerMapper;
+private final PassengerJpaRepository passengerJpaRepository;
 
-  public NotificationRepositoryAdapter(NotificationJpaRepository jpaRepository,
-      PassengerMapper passengerMapper, PassengerJpaRepository passengerJpaRepository) {
+public NotificationRepositoryAdapter(NotificationJpaRepository jpaRepository,
+    PassengerMapper passengerMapper, PassengerJpaRepository passengerJpaRepository) {
     this.jpaRepository = jpaRepository;
     this.passengerMapper = passengerMapper;
     this.passengerJpaRepository = passengerJpaRepository;
-  }
+}
 
-  @Override
-  public Notification guardar(Notification notification) {
+@Override
+public Notification guardar(Notification notification) {
     PassengerEntity passengerEntity = passengerJpaRepository.findById(
         notification.getPassenger().getId()
     ).orElseThrow(() -> new IllegalArgumentException("Pasajero no encontrado"));
@@ -36,19 +36,19 @@ public class NotificationRepositoryAdapter implements NotificationRepository {
     NotificationEntity saved = jpaRepository.save(entity);
     notification.setId(saved.getId());
     return notification;
-  }
+}
 
-  @Override
-  public List<Notification> buscarPorPasajero(UUID passengerId) {
+@Override
+public List<Notification> buscarPorPasajero(UUID passengerId) {
     return jpaRepository.findByPassengerId(passengerId).stream()
         .map(this::toDomain)
         .toList();
-  }
+}
 
-  private Notification toDomain(NotificationEntity entity) {
+private Notification toDomain(NotificationEntity entity) {
     Passenger passenger = passengerMapper.toDomain(entity.getPassenger());
     Notification notification = new Notification(passenger, entity.getTitle(), entity.getMessage());
     notification.setId(entity.getId());
     return notification;
-  }
+}
 }
