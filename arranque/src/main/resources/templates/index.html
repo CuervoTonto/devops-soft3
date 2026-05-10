@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlyTrack - Vuelos Disponibles</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }
+    h1 { color: #333; }
+    .nav { margin-bottom: 20px; display: flex; gap: 15px; }
+    .nav a { color: #007bff; text-decoration: none; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f8f9fa; }
+    .btn { padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .btn:hover { background: #0056b3; }
+    .btn:disabled { background: #ccc; cursor: not-allowed; }
+    .status { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+    .status-SCHEDULED { background: #e3f2fd; color: #1565c0; }
+    .status-ON_TIME { background: #d4edda; color: #155724; }
+    .status-DELAYED { background: #fff3cd; color: #856404; }
+    .status-CANCELLED { background: #f8d7da; color: #721c24; }
+    .loading { text-align: center; padding: 20px; color: #666; }
+    .error { color: red; padding: 10px; background: #ffe6e6; border-radius: 4px; margin-top: 10px; }
+    .success { color: green; padding: 10px; background: #e6ffe6; border-radius: 4px; margin-top: 10px; }
+    .user-info { float: right; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a href="/">Inicio</a>
+      <a href="/itinerario">Mi Itinerario</a>
+      <a href="/notificaciones">Notificaciones</a>
+      <span class="user-info" id="userInfo"></span>
+    </div>
+    
+    <h1>Vuelos Disponibles</h1>
+    <div id="loading" class="loading">Cargando vuelos...</div>
+    <div id="error" class="error" style="display: none;"></div>
+    
+    <table id="vuelosTable" style="display: none;">
+      <thead>
+        <tr>
+          <th>Vuelo</th>
+          <th>Aerolínea</th>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Salida</th>
+          <th>Llegada</th>
+          <th>Puerta</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="vuelosBody">
+      </tbody>
+    </table>
+
+    <div id="successMessage" class="success" style="display: none;"></div>
+  </div>
+
+  <script>
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    function isLoggedIn() {
+      return getCookie('token') !== null;
+    }
+
+    async function loadVuelos() {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const table = document.getElementById('vuelosTable');
+      
+      try {
+        const response = await fetch('/api/vuelos');
+        if (!response.ok) throw new Error('Error al cargar vuelos');
+        
+        const vuelos = await response.json();
+        
+        if (vuelos.length === 0) {
+          loading.textContent = 'No hay vuelos disponibles';
+          return;
+        }
+        
+        const tbody = document.getElementById('vuelosBody');
+        tbody.innerHTML = '';
+        
+        vuelos.forEach(vuelo => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${vuelo.numeroVuelo}</td>
+            <td>${vuelo.aerolinea}</td>
+            <td>${vuelo.origen}</td>
+            <td>${vuelo.destino}</td>
+            <td>${new Date(vuelo.salida).toLocaleString('es-CO')}</td>
+            <td>${new Date(vuelo.llegada).toLocaleString('es-CO')}</td>
+            <td>${vuelo.puerta}</td>
+            <td><span class="status status-${vuelo.estado}">${vuelo.estado}</span></td>
+            <td>
+              <button class="btn" onclick="reservar('${vuelo.id}')">Reservar</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+        
+        loading.style.display = 'none';
+        table.style.display = 'table';
+        
+      } catch (err) {
+        loading.style.display = 'none';
+        error.textContent = err.message;
+        error.style.display = 'block';
+      }
+    }
+
+    async function reservar(flightScheduleId) {
+      if (!isLoggedIn()) {
+        alert('Debes iniciar sesión para reservar');
+        window.location.href = '/login';
+        return;
+      }
+
+      const error = document.getElementById('error');
+      const success = document.getElementById('successMessage');
+      error.style.display = 'none';
+      success.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/reservas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ flightScheduleId })
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.message || 'Error al crear reserva');
+        }
+
+        const reserva = await response.json();
+        success.innerHTML = `
+          <strong>¡Reserva exitosa!</strong><br>
+          Referencia: ${reserva.referencia}<br>
+          Vuelo: ${reserva.numeroVuelo} (${reserva.origen} → ${reserva.destino})<br>
+          Asiento: ${reserva.asiento}
+        `;
+        success.style.display = 'block';
+        
+        setTimeout(() => { success.style.display = 'none'; }, 10000);
+        
+      } catch (err) {
+        error.textContent = err.message;
+        error.style.display = 'block';
+      }
+    }
+
+    function updateUserInfo() {
+      const userInfo = document.getElementById('userInfo');
+      if (isLoggedIn()) {
+        fetch('/itinerario')
+          .then(() => { userInfo.textContent = '✓ Sesión activa'; })
+          .catch(() => { userInfo.textContent = 'Sesión activa'; });
+      }
+    }
+
+    loadVuelos();
+    updateUserInfo();
+  </script>
+</body>
+</html>

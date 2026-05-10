@@ -1,0 +1,6 @@
+rootProject.name = "DevOpsTaller"
+
+include "arranque"
+include "dominio"
+include "aplicacion"
+include "infraestructura"

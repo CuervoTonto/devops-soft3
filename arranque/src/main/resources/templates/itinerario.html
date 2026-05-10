@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlyTrack - Mi Itinerario</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }
+    h1 { color: #333; }
+    .nav { margin-bottom: 20px; }
+    .nav a { margin-right: 15px; color: #007bff; text-decoration: none; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f8f9fa; }
+    .gate { font-weight: bold; color: #007bff; }
+    .status { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+    .status-ON_TIME { background: #d4edda; color: #155724; }
+    .status-DELAYED { background: #fff3cd; color: #856404; }
+    .status-CANCELLED { background: #f8d7da; color: #721c24; }
+    .no-data { color: #666; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a href="/">Inicio</a>
+      <a href="/itinerario">Itinerario</a>
+      <a href="/notificaciones">Notificaciones</a>
+    </div>
+    
+    <h1>Mis Itinerarios</h1>
+    <p th:if="${email != null}">Bienvenido: <strong th:text="${email}">email</strong></p>
+    
+    <div th:if="${itinerarios != null and not #lists.isEmpty(itinerarios)}">
+      <table>
+        <thead>
+          <tr>
+            <th>Vuelo</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Salida</th>
+            <th>Puerta</th>
+            <th>Estado</th>
+            <th>Asiento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="itinerario : ${itinerarios}">
+            <td th:text="${itinerario.numeroVuelo}">AA1234</td>
+            <td th:text="${itinerario.origen}">BOG</td>
+            <td th:text="${itinerario.destino}">JFK</td>
+            <td th:text="${#temporals.format(itinerario.horaSalida, 'dd/MM/yyyy HH:mm')}">10:00</td>
+            <td class="gate" th:text="${itinerario.puerta}">A12</td>
+            <td>
+              <span class="status" th:classappend="'status-' + ${itinerario.estado}" 
+                    th:text="${itinerario.estado}">ON_TIME</span>
+            </td>
+            <td th:text="${itinerario.asiento}">12A</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div th:if="${itinerarios == null or #lists.isEmpty(itinerarios)}" class="no-data">
+      <div th:if="${email == null}">
+        <p>Inicia sesión para ver tus itinerarios.</p>
+        <a href="/login">Iniciar sesión</a>
+      </div>
+      <div th:if="${email != null}">
+        <p>No tienes itinerarios disponibles.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
