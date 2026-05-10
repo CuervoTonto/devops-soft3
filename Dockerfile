@@ -3,14 +3,24 @@ FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
-COPY gradle/wrapper/ gradle/wrapper/
-COPY gradlew build.gradle settings.gradle ./
+COPY gradle gradle
+COPY gradlew ./gradlew
+COPY settings.gradle settings.gradle
 
-RUN chmod +x gradlew && ./gradlew dependencies --no-daemon
+COPY dominio/src/ dominio/src/
+COPY aplicacion/src/ aplicacion/src/
+COPY infraestructura/src/ infraestructura/src/
+COPY arranque/src/ arranque/src/
 
-COPY . .
+COPY dominio/build.gradle dominio/
+COPY aplicacion/build.gradle aplicacion/
+COPY infraestructura/build.gradle infraestructura/
+COPY arranque/build.gradle arranque/
 
-RUN ./gradlew :arranque:bootJar --no-daemon -x test
+RUN chmod +x gradlew
+RUN ./gradlew dependencies --no-daemon
+
+RUN ./gradlew bootJar --no-daemon -x test
 
 # Stage 2: Runtime
 FROM eclipse-temurin:21-jre-alpine
