@@ -35,9 +35,18 @@ public class FlightScheduleMapper {
       schedule.asignarPuerta(new Gate(entity.getCurrentGate()));
     }
 
-    schedule.retraso(entity.getArrivalTime());
-    if (entity.getStatus().equals("CANCELLED")) {
-      schedule.cancelar();
+    if (entity.getStatus() != null) {
+      try {
+        FlightStatus flightStatus = FlightStatus.valueOf(entity.getStatus());
+        if (flightStatus == FlightStatus.DELAYED) {
+          schedule.retraso(entity.getArrivalTime());
+        } else if (flightStatus == FlightStatus.CANCELLED) {
+          schedule.cancelar();
+        } else {
+          schedule.setStatus(flightStatus);
+        }
+      } catch (IllegalArgumentException e) {
+      }
     }
 
     return schedule;
@@ -72,6 +81,16 @@ public class FlightScheduleMapper {
           schedule.retraso(arrival);
         } else if (flightStatus == FlightStatus.CANCELLED) {
           schedule.cancelar();
+        } else if (flightStatus == FlightStatus.DEPARTED) {
+          schedule.setStatus(FlightStatus.DEPARTED);
+        } else if (flightStatus == FlightStatus.LANDED) {
+          schedule.setStatus(FlightStatus.LANDED);
+        } else if (flightStatus == FlightStatus.SCHEDULED) {
+          schedule.setStatus(FlightStatus.SCHEDULED);
+        } else if (flightStatus == FlightStatus.ON_TIME) {
+          schedule.setStatus(FlightStatus.ON_TIME);
+        } else if (flightStatus == FlightStatus.BOARDING) {
+          schedule.setStatus(FlightStatus.BOARDING);
         }
       } catch (IllegalArgumentException e) {
       }

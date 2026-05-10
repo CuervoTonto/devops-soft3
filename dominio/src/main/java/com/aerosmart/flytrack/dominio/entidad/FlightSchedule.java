@@ -61,5 +61,6 @@ public class FlightSchedule {
   public LocalDateTime getScheduledArrival() { return scheduledArrival; }
   public Gate getCurrentGate() { return currentGate; }
   public FlightStatus getStatus() { return status; }
+  public void setStatus(FlightStatus status) { this.status = status; }
   public List<Booking> getBookings() { return bookings; }
 }

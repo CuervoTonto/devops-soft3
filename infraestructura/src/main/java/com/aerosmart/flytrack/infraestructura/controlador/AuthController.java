@@ -39,5 +39,10 @@ public class AuthController {
     return Map.of("token", token);
   }
 
+  @PostMapping("/logout")
+  public Map<String, String> logout() {
+    return Map.of("message", "Sesión cerrada");
+  }
+
   public record LoginRequest(String email, String password) {}
 }

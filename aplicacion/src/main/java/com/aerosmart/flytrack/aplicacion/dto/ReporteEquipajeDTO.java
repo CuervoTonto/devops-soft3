@@ -9,5 +9,9 @@ public record ReporteEquipajeDTO(
     String tipoIncidencia,
     String descripcion,
     String estado,
-    LocalDateTime reportadoEn
+    LocalDateTime reportadoEn,
+    String numeroVuelo,
+    String referenciaReserva,
+    String origen,
+    String destino
 ) {}

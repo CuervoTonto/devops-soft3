@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlyTrack - Vuelos Disponibles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sky: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            },
+            aero: {
+              500: '#0ea5e9',
+              600: '#0284c7',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+    }
+    .gradient-hero {
+      background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .status-badge {
+      @apply px-3 py-1 rounded-full text-xs font-semibold;
+    }
+  </style>
+</head>
+<body class="bg-sky-50 min-h-screen">
+  <nav class="glass-nav fixed top-0 w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <span class="text-2xl font-bold text-sky-600">✈ FlyTrack</span>
+        </div>
+        <div class="flex items-center space-x-6">
+          <a href="/" class="text-sky-700 hover:text-sky-900 font-medium transition">Inicio</a>
+          <a href="/itinerario" class="text-slate-600 hover:text-sky-600 font-medium transition">Mi Itinerario</a>
+          <a href="/equipaje" class="text-slate-600 hover:text-sky-600 font-medium transition">Equipaje</a>
+          <a href="/notificaciones" class="text-slate-600 hover:text-sky-600 font-medium transition">Notificaciones</a>
+          <span id="userInfo" class="text-sm text-slate-500 bg-sky-100 px-3 py-1 rounded-full"></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="gradient-hero pt-24 pb-16 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Vuelos Disponibles</h1>
+      <p class="text-sky-100 text-lg">Encuentra tu próximo destino y reserva tu vuelo</p>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 py-8 -mt-4">
+    <div class="bg-white rounded-2xl shadow-xl border border-sky-100 overflow-hidden">
+      <div id="loading" class="text-center py-16">
+        <div class="inline-flex items-center justify-center w-12 h-12 border-4 border-sky-200 border-t-sky-500 rounded-full animate-spin"></div>
+        <p class="mt-4 text-slate-500">Cargando vuelos...</p>
+      </div>
+      
+      <div id="error" class="hidden mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-red-600 flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          <span id="errorText"></span>
+        </p>
+      </div>
+
+      <div id="vuelosTable" class="hidden p-6">
+        <div id="vuelosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        </div>
+      </div>
+
+      <div id="successMessage" class="hidden mx-6 mb-6 p-4 bg-green-50 border border-green-200 rounded-lg animate-fade-in">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    function isLoggedIn() {
+      return getCookie('token') !== null;
+    }
+
+    function getStatusClasses(status) {
+      const classes = {
+        'SCHEDULED': 'bg-sky-100 text-sky-700 border-sky-200',
+        'ON_TIME': 'bg-green-100 text-green-700 border-green-200',
+        'DELAYED': 'bg-amber-100 text-amber-700 border-amber-200',
+        'CANCELLED': 'bg-red-100 text-red-700 border-red-200'
+      };
+      return classes[status] || 'bg-slate-100 text-slate-700';
+    }
+
+    async function loadVuelos() {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const errorText = document.getElementById('errorText');
+      const table = document.getElementById('vuelosTable');
+      
+      try {
+        const response = await fetch('/api/vuelos');
+        if (!response.ok) throw new Error('Error al cargar vuelos');
+        
+        const vuelos = await response.json();
+        
+        if (vuelos.length === 0) {
+          loading.innerHTML = '<p class="text-slate-500 text-lg">No hay vuelos disponibles</p>';
+          return;
+        }
+        
+        const grid = document.getElementById('vuelosGrid');
+        grid.innerHTML = '';
+        
+        const statusIcons = {
+          'SCHEDULED': '📅',
+          'ON_TIME': '✅',
+          'DELAYED': '⏰',
+          'CANCELLED': '❌'
+        };
+        
+        vuelos.forEach(vuelo => {
+          const card = document.createElement('div');
+          card.className = 'bg-white rounded-xl shadow-md border border-sky-100 p-5 hover:shadow-lg transition-all duration-300 hover:border-sky-300';
+          card.innerHTML = `
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <span class="text-xl font-bold text-sky-600">${vuelo.numeroVuelo}</span>
+                <p class="text-sm text-slate-500">${vuelo.aerolinea}</p>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-semibold border ${getStatusClasses(vuelo.estado)}">${statusIcons[vuelo.estado] || ''} ${vuelo.estado}</span>
+            </div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-center">
+                <span class="text-2xl font-bold text-slate-800">${vuelo.origen}</span>
+              </div>
+              <div class="flex-1 mx-4 relative">
+                <div class="h-0.5 bg-slate-200 rounded-full"></div>
+                <span class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2">
+                  <svg class="w-5 h-5 text-sky-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+                </span>
+              </div>
+              <div class="text-center">
+                <span class="text-2xl font-bold text-slate-800">${vuelo.destino}</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+              <div class="bg-sky-50 rounded-lg p-2">
+                <p class="text-slate-500 text-xs">Salida</p>
+                <p class="font-medium text-slate-700">${new Date(vuelo.salida).toLocaleString('es-CO')}</p>
+              </div>
+              <div class="bg-sky-50 rounded-lg p-2">
+                <p class="text-slate-500 text-xs">Llegada</p>
+                <p class="font-medium text-slate-700">${new Date(vuelo.llegada).toLocaleString('es-CO')}</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-500">Puerta:</span>
+                <span class="bg-sky-100 text-sky-700 px-2 py-1 rounded text-sm font-semibold">${vuelo.puerta}</span>
+              </div>
+              <button onclick="reservar('${vuelo.id}')" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 shadow-sm hover:shadow-md">
+                Reservar
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+        
+        loading.style.display = 'none';
+        table.style.display = 'block';
+        
+      } catch (err) {
+        loading.style.display = 'none';
+        errorText.textContent = err.message;
+        error.style.display = 'block';
+      }
+    }
+
+    async function reservar(flightScheduleId) {
+      if (!isLoggedIn()) {
+        alert('Debes iniciar sesión para reservar');
+        window.location.href = '/login';
+        return;
+      }
+
+      const error = document.getElementById('error');
+      const success = document.getElementById('successMessage');
+      error.style.display = 'none';
+      success.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/reservas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ flightScheduleId })
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.message || 'Error al crear reserva');
+        }
+
+        const reserva = await response.json();
+        success.innerHTML = `
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            <div>
+              <strong class="text-green-800">¡Reserva exitosa!</strong>
+              <p class="text-green-700 text-sm mt-1">
+                Referencia: ${reserva.referencia} | Vuelo: ${reserva.numeroVuelo} (${reserva.origen} → ${reserva.destino}) | Asiento: ${reserva.asiento}
+              </p>
+            </div>
+          </div>
+        `;
+        success.style.display = 'block';
+        
+        setTimeout(() => { success.style.display = 'none'; }, 10000);
+        
+      } catch (err) {
+        errorText.textContent = err.message;
+        error.style.display = 'block';
+      }
+    }
+
+    function updateUserInfo() {
+      const userInfo = document.getElementById('userInfo');
+      if (isLoggedIn()) {
+        fetch('/itinerario')
+          .then(() => { userInfo.textContent = '✓ Sesión activa'; })
+          .catch(() => { userInfo.textContent = 'Sesión activa'; });
+      }
+    }
+
+    loadVuelos();
+    updateUserInfo();
+  </script>
+</body>
+</html>

@@ -8,6 +8,7 @@ public record ItinerarioDTO(
     String origen,
     String destino,
     LocalDateTime horaSalida,
+    LocalDateTime horaLlegada,
     String puerta,
     String estado,
     String asiento

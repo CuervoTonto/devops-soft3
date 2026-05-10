@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**" kind="src" output="bin/main" path="src/main/resources">
+	<classpathentry kind="src" output="bin/main" path="src/main/resources">
 		<attributes>
 			<attribute name="gradle_scope" value="main"/>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
@@ -29,8 +29,5 @@
 			<attribute name="gradle.buildServer" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/brahian/Code/ingsoft3/devops/infraestructura/build/libs/infraestructura-0.0.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="/home/brahian/Code/ingsoft3/devops/aplicacion/build/libs/aplicacion-0.0.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="/home/brahian/Code/ingsoft3/devops/dominio/build/libs/dominio-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>

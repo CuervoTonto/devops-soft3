@@ -20,4 +20,9 @@ public class IndexController {
   public String registro() {
     return "registro";
   }
+
+  @GetMapping("/equipaje")
+  public String equipaje() {
+    return "equipaje";
+  }
 }

@@ -101,8 +101,9 @@ public class ConfiguracionServicios {
   public BaggageReportRepository baggageReportRepository(
       BaggageReportJpaRepository jpaRepository,
       BaggageReportMapper baggageReportMapper,
-      BookingJpaRepository bookingJpaRepository) {
-    return new BaggageReportRepositoryAdapter(jpaRepository, baggageReportMapper, bookingJpaRepository);
+      BookingJpaRepository bookingJpaRepository,
+      BookingMapper bookingMapper) {
+    return new BaggageReportRepositoryAdapter(jpaRepository, baggageReportMapper, bookingJpaRepository, bookingMapper);
   }
 
   @Bean
@@ -113,8 +114,8 @@ public class ConfiguracionServicios {
 
   @Bean
   public EquipajeServicio equipajeServicio(BookingRepository bookingRepo,
-      BaggageReportRepository baggageReportRepo) {
-    return new EquipajeServicio(bookingRepo, baggageReportRepo);
+      BaggageReportRepository baggageReportRepo, PassengerRepository passengerRepo) {
+    return new EquipajeServicio(bookingRepo, baggageReportRepo, passengerRepo);
   }
 
   @Bean

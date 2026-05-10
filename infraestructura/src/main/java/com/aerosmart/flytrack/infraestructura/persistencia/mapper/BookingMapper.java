@@ -33,6 +33,7 @@ public class BookingMapper {
 
     Booking booking = new Booking(passenger, flightSchedule, entity.getSeatAssignment());
     booking.setId(entity.getId());
+    booking.setReference(new BookingReference(entity.getBookingReference()));
     return booking;
   }
 

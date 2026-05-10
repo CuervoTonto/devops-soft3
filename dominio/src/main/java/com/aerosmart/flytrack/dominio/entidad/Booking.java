@@ -38,6 +38,7 @@ public class Booking {
   public void setPassenger(Passenger passenger) { this.passenger = passenger; }
   public void setFlightSchedule(FlightSchedule flightSchedule) { this.flightSchedule = flightSchedule; }
   public BookingReference getReference() { return reference; }
+  public void setReference(BookingReference reference) { this.reference = reference; }
   public FlightSchedule getFlightSchedule() { return flightSchedule; }
   public Passenger getPassenger() { return passenger; }
   public String getSeatAssignment() { return seatAssignment; }

@@ -48,6 +48,7 @@ public class ItinerarioServicio implements ItinerarioPuerto {
         schedule.getOrigin().value(),
         schedule.getDestination().value(),
         schedule.getScheduledDeparture(),
+        schedule.getScheduledArrival(),
         schedule.getCurrentGate() != null ? schedule.getCurrentGate().value() : "Por asignar",
         schedule.getStatus().name(),
         booking.getSeatAssignment()
